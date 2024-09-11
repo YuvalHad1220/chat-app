@@ -27,7 +27,26 @@ const useScrollIndicators = () => {
     }
   }, []);
 
-  return { showTopScroll, showBottomScroll, scrollableRef };
+  const scrollTop = () => {
+    if (!scrollableRef)
+        return;
+
+    const element = scrollableRef.current;
+    if (element) {
+      element.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const scrollBottom = () => {
+    if (!scrollableRef)
+      return;
+    const element = scrollableRef.current;
+    if (element) {
+      element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+    }
+  };
+
+  return { showTopScroll, showBottomScroll, scrollableRef, scrollTop, scrollBottom };
 };
 
 export default useScrollIndicators;

@@ -79,9 +79,9 @@ const Chat = () => {
           </div>
         </div>
         {/* 3-dot Vertical Icon */}
-        <div className="flex items-center">
-          <FiMoreVertical className="text-xl cursor-pointer" />
-        </div>
+        <button className="btn btn-ghost btn-circle ">
+          <FiMoreVertical size={24} />
+        </button>
       </div>
 
       <div className="divider my-1" />
