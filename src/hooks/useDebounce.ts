@@ -1,25 +1,20 @@
 import { useState, useEffect } from 'react';
 
-const useDebounce = <T>(value: T, delay: number = 300) => {
-  const [intermediateValue, setIntermediateValue] = useState(value);
-  const [debouncedValue, setDebouncedValue] = useState(value);
+const useDebounce = <T>(value: T, delay: number) => {
+  const [immediateValue, setImmediateValue] = useState<T>(value);
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
-    // Set the intermediate value immediately
-    setIntermediateValue(value);
-
-    // Set up a timeout to update the debounced value after the specified delay
     const handler = setTimeout(() => {
-      setDebouncedValue(intermediateValue);
+      setDebouncedValue(immediateValue);
     }, delay);
 
-    // Clean up the timeout if the component unmounts or if the value or delay changes
     return () => {
       clearTimeout(handler);
     };
-  }, [intermediateValue, delay]);
+  }, [immediateValue, delay]);
 
-  return { debouncedValue, intermediateValue, setIntermediateValue };
+  return [immediateValue, debouncedValue, setImmediateValue] as const;
 };
 
 export default useDebounce;
