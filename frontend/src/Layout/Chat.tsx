@@ -1,7 +1,7 @@
 import { useSocketContext } from "../contexts/useSocketContext";
 import { generateRandomChatLog } from "../assets/randomGenerator";
 import ChatBubble from "../Components/ChatBubble";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import { FiSend, FiMoreVertical, FiUser } from "react-icons/fi";
 
 type ChatProps = {
@@ -12,7 +12,7 @@ const Chat: React.FC<ChatProps> = ({ chatId }) => {
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState<ChatBubbleProps[]>([]);
 
-  const {sendMessage} = useSocketContext()
+  const { sendPayload } = useSocketContext();
 
   useEffect(() => {
     if (chatId) {
@@ -23,14 +23,24 @@ const Chat: React.FC<ChatProps> = ({ chatId }) => {
 
   const handleSendMessage = () => {
     if (message.trim() === "") return;
-    sendMessage(message)
+
+    sendPayload({
+      payloadType: "MSG",
+      payloadContent: {
+        senderId: "123",
+        receiverId: chatId!,
+        timeSent: new Date().toISOString(),
+        content: message,
+      },
+    });
 
     const newMessage: ChatBubbleProps = {
       sender: "You",
       message,
-      time: new Date().toLocaleTimeString([], {
+      time: new Date().toLocaleTimeString("he-IL", {
         hour: "2-digit",
         minute: "2-digit",
+        hour12: false
       }),
       isSender: true,
     };
@@ -39,10 +49,19 @@ const Chat: React.FC<ChatProps> = ({ chatId }) => {
     setMessage(""); // Clear input after sending
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Prevent newline on Enter
+      handleSendMessage();
+    }
+  };
+
   if (!chatId) {
     return (
       <div className="rounded-lg w-full h-full flex items-center justify-center bg-base-200 p-3">
-        <span className="text-lg opacity-70">Click a chat to start a conversation.</span>
+        <span className="text-lg opacity-70">
+          Click a chat to start a conversation.
+        </span>
       </div>
     );
   }
@@ -61,7 +80,7 @@ const Chat: React.FC<ChatProps> = ({ chatId }) => {
           </div>
         </div>
         {/* 3-dot Vertical Icon */}
-        <button className="btn btn-ghost btn-circle ">
+        <button className="btn btn-ghost btn-circle">
           <FiMoreVertical size={24} />
         </button>
       </div>
@@ -76,14 +95,16 @@ const Chat: React.FC<ChatProps> = ({ chatId }) => {
       </div>
 
       {/* Message Input Bar */}
-      <div className="mt-3 flex items-center gap-2 p-3 bg-base-300 rounded-lg">
-        <input
-          type="text"
-          className="input input-bordered flex-1"
+      <div className="mt-3 flex gap-2 p-2 bg-base-300 rounded-lg">
+        <textarea
+          className="textarea textarea-bordered flex-1 resize-none"
           placeholder="Type a message..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSendMessage()} // Send on Enter
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+            setMessage(e.target.value)
+          }
+          onKeyDown={handleKeyDown}
+          rows={1} // Adjust rows as needed
         />
         <button className="btn btn-primary" onClick={handleSendMessage}>
           <FiSend className="text-xl" />

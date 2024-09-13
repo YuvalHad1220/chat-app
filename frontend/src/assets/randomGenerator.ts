@@ -1,7 +1,7 @@
 const getRandomElement = (arr: string[]) =>
   arr[Math.floor(Math.random() * arr.length)];
 
-const generateRandomUser = (): Partial<iUserChatCard> => {
+const generateRandomUser = (): Omit<iUserChatCard, "onClick"> => {
   const names = [
     "Alice Smith",
     "Bob Johnson",
@@ -25,7 +25,7 @@ const generateRandomUser = (): Partial<iUserChatCard> => {
   };
 };
 
-export const generateRandomUsers = (count: number): Partial<iUserChatCard>[] => {
+export const generateRandomUsers = (count: number): Omit<iUserChatCard, "onClick">[] => {
   return Array.from({ length: count }, generateRandomUser);
 };
 
@@ -58,6 +58,7 @@ export const generateRandomChatLog = (): ChatBubbleProps[] => {
       time: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
+        hour12: false,
       }),
       isSender,
     });

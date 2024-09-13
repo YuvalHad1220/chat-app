@@ -4,7 +4,6 @@ import Sidebar from "./Sidebar";
 
 const MainLayout = () => {
   const { filterParams, setFilterParams } = useParamsContext();
-
   return (
     <div className="flex h-screen gap-3 p-3">
       <div className="w-[20%] rounded-xl flex items-center justify-center">
