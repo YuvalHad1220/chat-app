@@ -1,16 +1,9 @@
+import { useParamsContext } from "../contexts/useParamsContext";
 import Chat from "./Chat";
 import Sidebar from "./Sidebar";
-import {
-  useSearchParamsState,
-  SearchParamsStateType,
-} from "react-use-search-params-state";
 
 const MainLayout = () => {
-  const filtersDefaults: SearchParamsStateType = {
-    chatId: { type: "string", default: null },
-  };
-
-  const [filterParams, setFilterParams] = useSearchParamsState(filtersDefaults);
+  const { filterParams, setFilterParams } = useParamsContext();
 
   return (
     <div className="flex h-screen gap-3 p-3">

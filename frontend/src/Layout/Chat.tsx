@@ -1,3 +1,4 @@
+import { useSocketContext } from "../contexts/useSocketContext";
 import { generateRandomChatLog } from "../assets/randomGenerator";
 import ChatBubble from "../Components/ChatBubble";
 import { useState, useEffect } from "react";
@@ -7,12 +8,11 @@ type ChatProps = {
   chatId: string | null;
 };
 
-
-
-
 const Chat: React.FC<ChatProps> = ({ chatId }) => {
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState<ChatBubbleProps[]>([]);
+
+  const {sendMessage} = useSocketContext()
 
   useEffect(() => {
     if (chatId) {
@@ -23,6 +23,7 @@ const Chat: React.FC<ChatProps> = ({ chatId }) => {
 
   const handleSendMessage = () => {
     if (message.trim() === "") return;
+    sendMessage(message)
 
     const newMessage: ChatBubbleProps = {
       sender: "You",

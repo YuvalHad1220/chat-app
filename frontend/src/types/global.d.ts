@@ -12,3 +12,4 @@ interface ChatBubbleProps {
     fullName: string;
     timestamp: string;
   }
+  
