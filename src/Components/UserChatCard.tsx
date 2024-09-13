@@ -2,13 +2,7 @@ import React from "react";
 import { FiUser } from "react-icons/fi";
 import classNames from "classnames";
 
-interface iUserChatCard {
-  active?: boolean;
-  onClick: () => void;
-  latestMessage?: string;
-  fullName: string;
-  timestamp: string;
-}
+
 
 const UserChatCard: React.FC<iUserChatCard> = ({
   active,

@@ -15,8 +15,7 @@ type SidebarProps = {
   setChatId: (chatId: string) => void
 }
 
-const Sidebar: React.FC<SidebarProps> = () => {
-  const [chatId, setChatId] = useState("")
+const Sidebar: React.FC<SidebarProps> = ({chatId, setChatId}) => {
   const {
     showTopScroll,
     showBottomScroll,

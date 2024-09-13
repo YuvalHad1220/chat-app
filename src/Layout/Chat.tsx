@@ -1,52 +1,25 @@
-import React, { useState } from "react";
+import { generateRandomChatLog } from "../assets/randomGenerator";
+import ChatBubble from "../Components/ChatBubble";
+import { useState, useEffect } from "react";
 import { FiSend, FiMoreVertical, FiUser } from "react-icons/fi";
 
-interface ChatBubbleProps {
-  sender: string;
-  message: string;
-  time: string;
-  isSender: boolean;
-}
-
-const ChatBubble: React.FC<ChatBubbleProps> = ({
-  sender,
-  message,
-  time,
-  isSender,
-}) => {
-  return (
-    <div className={`chat ${isSender ? "chat-end" : "chat-start"} mb-3`}>
-      <div className="chat-header">
-        {sender}
-        <time className="text-xs opacity-50 ml-2">{time}</time>
-      </div>
-      <div
-        className={`chat-bubble ${
-          isSender ? "bg-gray-300" : "bg-gray-200"
-        } text-black`}
-      >
-        {message}
-      </div>
-    </div>
-  );
+type ChatProps = {
+  chatId: string | null;
 };
 
-const Chat = () => {
+
+
+
+const Chat: React.FC<ChatProps> = ({ chatId }) => {
   const [message, setMessage] = useState("");
-  const [chatLog, setChatLog] = useState<ChatBubbleProps[]>([
-    {
-      sender: "John Doe",
-      message: "Hey, how's it going?",
-      time: "12:00 PM",
-      isSender: false,
-    },
-    {
-      sender: "You",
-      message: "I'm good! What about you?",
-      time: "12:01 PM",
-      isSender: true,
-    },
-  ]);
+  const [chatLog, setChatLog] = useState<ChatBubbleProps[]>([]);
+
+  useEffect(() => {
+    if (chatId) {
+      const randomLog = generateRandomChatLog();
+      setChatLog(randomLog);
+    }
+  }, [chatId]);
 
   const handleSendMessage = () => {
     if (message.trim() === "") return;
@@ -64,6 +37,14 @@ const Chat = () => {
     setChatLog([...chatLog, newMessage]);
     setMessage(""); // Clear input after sending
   };
+
+  if (!chatId) {
+    return (
+      <div className="rounded-lg w-full h-full flex items-center justify-center bg-base-200 p-3">
+        <span className="text-lg opacity-70">Click a chat to start a conversation.</span>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-lg w-full h-full flex flex-col bg-base-200 p-3">

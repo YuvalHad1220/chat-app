@@ -1,7 +1,7 @@
 const getRandomElement = (arr: string[]) =>
   arr[Math.floor(Math.random() * arr.length)];
 
-const generateRandomUser = (): iUserChatCard => {
+const generateRandomUser = (): Partial<iUserChatCard> => {
   const names = [
     "Alice Smith",
     "Bob Johnson",
@@ -25,6 +25,43 @@ const generateRandomUser = (): iUserChatCard => {
   };
 };
 
-export const generateRandomUsers = (count: number): iUserChatCard[] => {
+export const generateRandomUsers = (count: number): Partial<iUserChatCard>[] => {
   return Array.from({ length: count }, generateRandomUser);
+};
+
+const randomMessages = [
+  "Hey, what's up?",
+  "I'm doing great!",
+  "Let's meet up soon.",
+  "Have you seen the latest news?",
+  "That's awesome!",
+  "I totally agree with you.",
+  "Catch you later!",
+  "Sounds good!",
+];
+
+const randomNames = ["John Doe", "Jane Smith", "Alice Johnson", "Bob Brown"];
+
+
+export const generateRandomChatLog = (): ChatBubbleProps[] => {
+  const randomCount = Math.floor(Math.random() * 6) + 3; // Random number between 3 and 8
+  const chatLog: ChatBubbleProps[] = [];
+
+  for (let i = 0; i < randomCount; i++) {
+    const isSender = Math.random() > 0.5;
+    const randomMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+    const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+
+    chatLog.push({
+      sender: isSender ? "You" : randomName,
+      message: randomMessage,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      isSender,
+    });
+  }
+
+  return chatLog;
 };
