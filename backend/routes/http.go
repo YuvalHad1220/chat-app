@@ -7,5 +7,6 @@ import (
 )
 
 func RegisterHTTPRoutes(e *echo.Echo) {
-	e.GET("/hello", controllers.HelloHandler)
+	e.POST("/user", controllers.PostUser)
+	e.GET("/user", controllers.GetAllUsers)
 }

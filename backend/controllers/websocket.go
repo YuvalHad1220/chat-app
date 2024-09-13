@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"chat-app/_websocket" // Import the models package where the Message struct is defined
+	"chat-app/assets" // Import the models package where the Message struct is defined
 	// Import the models package where the Message struct is defined
 	// Import the websocket package for Payload
 
@@ -28,7 +28,8 @@ func HandleConnection(c echo.Context) error {
 		return err
 	}
 	defer conn.Close()
-
+	assets.GlobalConnectionManager.AddConnection(conn)
+	defer assets.GlobalConnectionManager.RemoveConnection(conn)
 	// Log the IP and port of the incoming connection
 	addr := c.Request().RemoteAddr
 	fmt.Println("Client connected from:", addr)
@@ -46,12 +47,22 @@ func HandleConnection(c echo.Context) error {
 		}
 
 		// Unmarshal the message into the Message struct
-		var payload _websocket.Payload
+		var payload assets.Payload
 		if err := json.Unmarshal(msg, &payload); err != nil {
 			fmt.Println("Error while unmarshaling payload:", err)
 			continue
 		}
 
+		switch payload.PayloadType {
+		case assets.MessageType:
+			{
+				fmt.Println("Message")
+			}
+		case assets.UserType:
+			{
+				fmt.Println("User")
+			}
+		}
 		message, err := payload.ToMessage()
 		if err != nil {
 			fmt.Println(err)
@@ -61,28 +72,8 @@ func HandleConnection(c echo.Context) error {
 		// Log the received message
 		fmt.Printf("Received message from %s to %s: %s at %s\n", message.SenderId, message.ReceiverId, message.Content, message.TimeSent)
 
-		// Process the message or perform actions based on its content here
+		assets.GlobalConnectionManager.BroadcastMessage(msg)
 
-		// // Prepare a response payload if needed
-		// responsePayload := _websocket.Payload{
-		// 	PayloadType:    _websocket.MessageType,
-		// 	PayloadContent: msg, // Send raw payload back or modify as needed
-		// }
-
-		// // Marshal the response payload
-		// responseMsg, err := json.Marshal(responsePayload)
-		// if err != nil {
-		// 	fmt.Println("Error while marshaling response:", err)
-		// 	break
-		// }
-
-		// Echo the message back to the client
-		st := make([]byte, 23)
-		err = conn.WriteMessage(websocket.TextMessage, st)
-		if err != nil {
-			fmt.Println("Error while writing message:", err)
-			break
-		}
 	}
 
 	return nil

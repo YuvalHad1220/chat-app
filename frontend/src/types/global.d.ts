@@ -32,3 +32,8 @@ type Payload =
       payloadType: "OTHER";
       payloadContent: any; // Define other types if needed
     };
+
+type User = {
+  chatId: string;
+  username: string;
+};

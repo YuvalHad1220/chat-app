@@ -44,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
     200
   );
 
-  const users = useMemo(() => generateRandomUsers(0), []);
+  const users = useMemo(() => generateRandomUsers(90), []);
   const filteredUsers = useMemo(() => {
     if (!debouncedValue) return users;
     return users.filter((u) => u.fullName.includes(debouncedValue));

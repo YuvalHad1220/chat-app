@@ -1,5 +1,5 @@
 // websocket/payload.go
-package _websocket
+package assets
 
 import (
 	"chat-app/models" // Import the models package where the Message struct is defined
@@ -10,6 +10,7 @@ type PayloadType string
 
 const (
 	MessageType PayloadType = "MSG"
+	UserType    PayloadType = "USER"
 	// Add other types as needed
 )
 
@@ -25,6 +26,21 @@ func (p *Payload) ToMessage() (*models.Message, error) {
 	}
 
 	var msg models.Message
+	err := json.Unmarshal(p.PayloadContent, &msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return &msg, nil
+}
+
+// Convert Payload to Message
+func (p *Payload) ToUser() (*models.User, error) {
+	if p.PayloadType != UserType {
+		return nil, nil // Or return an error if the type is not message
+	}
+
+	var msg models.User
 	err := json.Unmarshal(p.PayloadContent, &msg)
 	if err != nil {
 		return nil, err
