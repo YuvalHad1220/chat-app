@@ -5,24 +5,22 @@ import LoadingButton from "../Components/LoadingButton";
 type CreateChatModalProps = {
   isOpen: boolean;
   closeModal: () => void;
+  onPost: (user: User) => void
+  isLoading: boolean
 };
 
 const CreateChatModal: React.FC<CreateChatModalProps> = ({
   isOpen,
   closeModal,
+  onPost,
+  isLoading
 }) => {
   const [chatId, setChatId] = useState("");
   const [username, setUsername] = useState("");
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    // Log the chat ID and username
-    console.log("Chat ID:", chatId);
-    console.log("Username:", username);
-
-    // Optionally close the modal after submission
-    closeModal();
+    onPost({chatId, username})
   };
 
   return (
@@ -70,7 +68,7 @@ const CreateChatModal: React.FC<CreateChatModalProps> = ({
             {/* Submit button */}
             <LoadingButton
               type="submit"
-              isLoading
+              isLoading={isLoading}
               className="btn bg-gray-700 text-white hover:bg-gray-800"
             >
               Create Chat

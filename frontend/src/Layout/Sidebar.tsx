@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import UserChatCard from "../Components/UserChatCard";
 import {
   FiSettings,
@@ -12,6 +12,8 @@ import useDebounce from "../hooks/useDebounce";
 import CreateChatModal from "../Modals/CreateChatModal";
 import useModal from "../hooks/useModal";
 import SettingsModal from "../Modals/SettingsModal";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { fetchUsers, postUser } from "../api/users";
 
 type SidebarProps = {
   chatId: string | null;
@@ -31,6 +33,20 @@ const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
     closeModal: closeSettingsModal,
   } = useModal();
 
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["users"],
+    queryFn: fetchUsers,
+    initialData: [],
+  });
+
+  const postChat = useMutation({
+    mutationFn: postUser,
+    onSuccess: (data) => {
+      closeChatModal();
+      console.log(data)
+    },
+    onError: (error) => {},
+  });
 
   const {
     showTopScroll,
@@ -44,10 +60,16 @@ const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
     200
   );
 
-  const users = useMemo(() => generateRandomUsers(90), []);
+  const users = useMemo(() => {
+    const randomUsers = generateRandomUsers(data.length);
+
+    return data.map((u, index) => ({ ...randomUsers[index], ...u }));
+  }, [data]);
+
+
   const filteredUsers = useMemo(() => {
     if (!debouncedValue) return users;
-    return users.filter((u) => u.fullName.includes(debouncedValue));
+    return users.filter((u) => u.username.includes(debouncedValue));
   }, [users, debouncedValue]);
 
   const hasUsers = users.length > 0;
@@ -55,8 +77,16 @@ const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
 
   return (
     <>
-      <CreateChatModal isOpen={isChatModalOpen} closeModal={closeChatModal} />
-      <SettingsModal isOpen={isSettingsModalOpen} closeModal={closeSettingsModal} />
+      <CreateChatModal
+      isLoading={postChat.isPending}
+        onPost={postChat.mutate}
+        isOpen={isChatModalOpen}
+        closeModal={closeChatModal}
+      />
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        closeModal={closeSettingsModal}
+      />
       <div className="rounded-lg w-full h-full flex flex-col p-3 bg-base-200">
         {/* Top bar */}
         <div className="flex items-center gap-1">
@@ -70,7 +100,10 @@ const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
           />
 
           {/* Settings Button */}
-          <button className="btn btn-ghost btn-circle" onClick={openSettingsModal}>
+          <button
+            className="btn btn-ghost btn-circle"
+            onClick={openSettingsModal}
+          >
             <FiSettings size={24} />
           </button>
 
@@ -108,11 +141,11 @@ const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
                 {filteredUsers.map((user, index) => (
                   <UserChatCard
                     timestamp={user.timestamp}
-                    fullName={user.fullName}
+                    fullName={user.username}
                     latestMessage={user.latestMessage}
                     key={index}
-                    onClick={() => setChatId(index.toFixed())}
-                    active={index.toFixed() === chatId}
+                    onClick={() => setChatId(user.chatId)}
+                    active={user.chatId === chatId}
                   />
                 ))}
               </ul>

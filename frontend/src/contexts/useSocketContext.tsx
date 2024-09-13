@@ -23,6 +23,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     // Initialize the WebSocket connection
+    console.log(import.meta.env.VITE_SOCKET_CONN)
     const newSocket = new WebSocket(import.meta.env.VITE_SOCKET_CONN);
 
     newSocket.onopen = () => {

@@ -6,12 +6,28 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var MongoClient *mongo.Client
 var UserCollection *mongo.Collection
+
+func ensureUniqueChatIdIndex(collection *mongo.Collection) error {
+	// Create a context
+	ctx := context.TODO()
+
+	// Define the index model
+	indexModel := mongo.IndexModel{
+		Keys:    bson.M{"chatId": 1},             // Index on the chatId field
+		Options: options.Index().SetUnique(true), // Make the index unique
+	}
+
+	// Create the index
+	_, err := collection.Indexes().CreateOne(ctx, indexModel)
+	return err
+}
 
 // InitMongoDB initializes the MongoDB connection and stores the collection references
 func InitMongoDB(uri string, dbName string) error {
@@ -38,6 +54,7 @@ func InitMongoDB(uri string, dbName string) error {
 	// Store the references globally
 	MongoClient = client
 	UserCollection = client.Database(dbName).Collection("users")
+	ensureUniqueChatIdIndex(UserCollection)
 
 	return nil
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"chat-app/assets"
 	"chat-app/models"
 	"chat-app/repositories"
 	"net/http"
@@ -19,6 +20,9 @@ func PostUser(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
+
+	// need to broadcast
+	assets.GlobalConnectionManager.BroadcastMessage([]byte(""))
 
 	return c.JSON(http.StatusCreated, result)
 }

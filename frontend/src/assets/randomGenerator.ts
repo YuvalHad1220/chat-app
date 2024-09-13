@@ -1,7 +1,7 @@
 const getRandomElement = (arr: string[]) =>
   arr[Math.floor(Math.random() * arr.length)];
 
-const generateRandomUser = (): Omit<iUserChatCard, "onClick"> => {
+const generateRandomUser = (): Omit<UserChatCard, "onClick" | "chatId"> => {
   const names = [
     "Alice Smith",
     "Bob Johnson",
@@ -20,12 +20,12 @@ const generateRandomUser = (): Omit<iUserChatCard, "onClick"> => {
 
   return {
     latestMessage: getRandomElement(messages),
-    fullName: getRandomElement(names),
+    username: getRandomElement(names),
     timestamp: getRandomElement(timestamps),
   };
 };
 
-export const generateRandomUsers = (count: number): Omit<iUserChatCard, "onClick">[] => {
+export const generateRandomUsers = (count: number): Omit<UserChatCard, "onClick" | "chatId">[] => {
   return Array.from({ length: count }, generateRandomUser);
 };
 

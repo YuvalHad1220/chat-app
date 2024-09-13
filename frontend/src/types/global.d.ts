@@ -5,13 +5,6 @@ interface ChatBubbleProps {
   isSender: boolean;
 }
 
-interface iUserChatCard {
-  active?: boolean;
-  onClick: () => void;
-  latestMessage?: string;
-  fullName: string;
-  timestamp: string;
-}
 
 type Message = {
   senderId: string;
@@ -37,3 +30,11 @@ type User = {
   chatId: string;
   username: string;
 };
+
+
+interface UserChatCard extends User {
+  active?: boolean;
+  onClick: () => void;
+  latestMessage?: string;
+  timestamp: string;
+}

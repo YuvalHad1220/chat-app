@@ -9,6 +9,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -27,6 +28,7 @@ func main() {
 	defer services.CloseMongoDB()
 	e := echo.New()
 	e.HideBanner = true
+	e.Use(middleware.CORS())
 
 	// Register routes
 	routes.RegisterWebSocketRoutes(e)
