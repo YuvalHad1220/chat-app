@@ -9,6 +9,7 @@ import React, {
 // Define the type for your socket context
 type SocketContextType = {
   socket: WebSocket | null;
+  socketData: string
   sendPayload: (payload: Payload) => void; // Changed method name to reflect sending structured payloads
 };
 
@@ -20,10 +21,10 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [socketData, setSocketData] = useState("");
 
   useEffect(() => {
     // Initialize the WebSocket connection
-    console.log(import.meta.env.VITE_SOCKET_CONN)
     const newSocket = new WebSocket(import.meta.env.VITE_SOCKET_CONN);
 
     newSocket.onopen = () => {
@@ -39,7 +40,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({
     };
 
     newSocket.onmessage = (event) => {
-      console.log("Message received:", event.data);
+      setSocketData(event.data)
     };
 
     setSocket(newSocket);
@@ -57,7 +58,7 @@ export const SocketProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <SocketContext.Provider value={{ socket, sendPayload }}>
+    <SocketContext.Provider value={{ socket, sendPayload, socketData }}>
       {children}
     </SocketContext.Provider>
   );

@@ -58,25 +58,20 @@ func HandleConnection(c echo.Context) error {
 		switch payload.PayloadType {
 		case assets.MessageType:
 			{
-				fmt.Println("Message")
+				var message models.Message
+				err = message.FromPayload(&payload)
+				if err != nil {
+					fmt.Println(err)
+					continue
+				}
+				SocketPostMessage(c, &message)
+
 			}
 		case assets.UserType:
 			{
 				fmt.Println("User")
 			}
 		}
-		var message models.Message
-		err = message.FromPayload(&payload)
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-
-		// Log the received message
-		fmt.Printf("Received message from %s to %s: %s at %s\n", message.SenderId, message.ReceiverId, message.Content, message.TimeSent)
-
-		assets.GlobalConnectionManager.BroadcastMessage(msg)
-
 	}
 
 	return nil

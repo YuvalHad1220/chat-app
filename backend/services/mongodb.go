@@ -13,6 +13,7 @@ import (
 
 var MongoClient *mongo.Client
 var UserCollection *mongo.Collection
+var MessageCollection *mongo.Collection
 
 func ensureUniqueChatIdIndex(collection *mongo.Collection) error {
 	// Create a context
@@ -54,6 +55,7 @@ func InitMongoDB(uri string, dbName string) error {
 	// Store the references globally
 	MongoClient = client
 	UserCollection = client.Database(dbName).Collection("users")
+	MessageCollection = client.Database(dbName).Collection("messages")
 	ensureUniqueChatIdIndex(UserCollection)
 
 	return nil

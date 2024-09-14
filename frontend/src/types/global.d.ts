@@ -5,7 +5,6 @@ interface ChatBubbleProps {
   isSender: boolean;
 }
 
-
 type Message = {
   senderId: string;
   receiverId: string;
@@ -13,7 +12,12 @@ type Message = {
   timeSent: string;
 };
 
-type PayloadType = "MSG" | "";
+type User = {
+  chatId: string;
+  username: string;
+};
+
+type PayloadType = "MSG" | "USER";
 
 // Define a union type for different payloads
 type Payload =
@@ -22,14 +26,10 @@ type Payload =
       payloadContent: Message;
     }
   | {
-      payloadType: "OTHER";
-      payloadContent: any; // Define other types if needed
+      payloadType: "USER";
+      payloadContent: User;
     };
 
-type User = {
-  chatId: string;
-  username: string;
-};
 
 
 interface UserChatCard extends User {

@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MainLayout from "./Layout/MainLayout";
-import { ParamsProvider } from "./contexts/useParamsContext.tsx";
+import { ParamsProvider } from "./contexts/useChatContext.tsx";
 import { SocketProvider } from "./contexts/useSocketContext.tsx";
 const queryClient = new QueryClient();
 

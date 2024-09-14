@@ -3,14 +3,15 @@ import { generateRandomChatLog } from "../assets/randomGenerator";
 import ChatBubble from "../Components/ChatBubble";
 import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import { FiSend, FiMoreVertical, FiUser } from "react-icons/fi";
+import { useChatContext } from "../contexts/useChatContext";
 
 type ChatProps = {
-  chatId: string | null;
 };
 
-const Chat: React.FC<ChatProps> = ({ chatId }) => {
+const Chat: React.FC<ChatProps> = () => {
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState<ChatBubbleProps[]>([]);
+  const {chatId, selfChatId} = useChatContext()
 
   const { sendPayload } = useSocketContext();
 
@@ -27,7 +28,7 @@ const Chat: React.FC<ChatProps> = ({ chatId }) => {
     sendPayload({
       payloadType: "MSG",
       payloadContent: {
-        senderId: "123",
+        senderId: selfChatId,
         receiverId: chatId!,
         timeSent: new Date().toISOString(),
         content: message,

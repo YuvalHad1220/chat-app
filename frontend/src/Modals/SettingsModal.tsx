@@ -5,14 +5,16 @@ import LoadingButton from "../Components/LoadingButton";
 type SettingsModalProps = {
   isOpen: boolean;
   closeModal: () => void;
+  defaultSelfChatId: string,
+  setSelfChatId: (selfChatId: string) => void
 };
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, closeModal }) => {
-  const [chatId, setChatId] = useState("");
+const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, closeModal, setSelfChatId, defaultSelfChatId }) => {
+  const [chatId, setChatId] = useState(defaultSelfChatId);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    setSelfChatId(chatId)
     // Log the chosen chat ID
     console.log("Preferred Chat ID:", chatId);
 
@@ -47,7 +49,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, closeModal }) => 
           <div className="modal-action">
             {/* Save Settings button */}
             <LoadingButton
-            isLoading
               type="submit"
               className="btn bg-gray-700 text-white hover:bg-gray-800"
             >

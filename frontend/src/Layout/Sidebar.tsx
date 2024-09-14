@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import UserChatCard from "../Components/UserChatCard";
 import {
   FiSettings,
@@ -12,20 +12,18 @@ import useDebounce from "../hooks/useDebounce";
 import CreateChatModal from "../Modals/CreateChatModal";
 import useModal from "../hooks/useModal";
 import SettingsModal from "../Modals/SettingsModal";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { fetchUsers, postUser } from "../api/users";
+import useUsers from "../hooks/useUsers";
+import { useChatContext } from "../contexts/useChatContext";
 
-type SidebarProps = {
-  chatId: string | null;
-  setChatId: (chatId: string) => void;
-};
+type SidebarProps = {};
 
-const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
+const Sidebar: React.FC<SidebarProps> = () => {
   const {
     isOpen: isChatModalOpen,
     openModal: openChatModal,
     closeModal: closeChatModal,
   } = useModal();
+  const { users: data, postChat } = useUsers({ closeChatModal });
 
   const {
     isOpen: isSettingsModalOpen,
@@ -33,20 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
     closeModal: closeSettingsModal,
   } = useModal();
 
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["users"],
-    queryFn: fetchUsers,
-    initialData: [],
-  });
-
-  const postChat = useMutation({
-    mutationFn: postUser,
-    onSuccess: (data) => {
-      closeChatModal();
-      console.log(data)
-    },
-    onError: (error) => {},
-  });
+  const { chatId, setChatId, selfChatId, setSelfChatId } = useChatContext();
 
   const {
     showTopScroll,
@@ -66,7 +51,6 @@ const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
     return data.map((u, index) => ({ ...randomUsers[index], ...u }));
   }, [data]);
 
-
   const filteredUsers = useMemo(() => {
     if (!debouncedValue) return users;
     return users.filter((u) => u.username.includes(debouncedValue));
@@ -78,12 +62,14 @@ const Sidebar: React.FC<SidebarProps> = ({ chatId, setChatId }) => {
   return (
     <>
       <CreateChatModal
-      isLoading={postChat.isPending}
+        isLoading={postChat.isPending}
         onPost={postChat.mutate}
         isOpen={isChatModalOpen}
         closeModal={closeChatModal}
       />
       <SettingsModal
+        defaultSelfChatId={selfChatId}
+        setSelfChatId={setSelfChatId}
         isOpen={isSettingsModalOpen}
         closeModal={closeSettingsModal}
       />
