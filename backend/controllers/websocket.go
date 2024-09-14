@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	"chat-app/assets" // Import the models package where the Message struct is defined
+	"chat-app/models"
+
 	// Import the models package where the Message struct is defined
 	// Import the websocket package for Payload
 
@@ -63,7 +65,8 @@ func HandleConnection(c echo.Context) error {
 				fmt.Println("User")
 			}
 		}
-		message, err := payload.ToMessage()
+		var message models.Message
+		err = message.FromPayload(&payload)
 		if err != nil {
 			fmt.Println(err)
 			continue

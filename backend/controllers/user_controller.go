@@ -4,6 +4,7 @@ import (
 	"chat-app/assets"
 	"chat-app/models"
 	"chat-app/repositories"
+	"encoding/json"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -21,8 +22,19 @@ func PostUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	// need to broadcast
-	assets.GlobalConnectionManager.BroadcastMessage([]byte(""))
+	payload, err := user.ToPayload()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	// Marshal Payload to JSON bytes
+	bytes, err := json.Marshal(payload)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	// Broadcast the message
+	assets.GlobalConnectionManager.BroadcastMessage(bytes)
 
 	return c.JSON(http.StatusCreated, result)
 }
